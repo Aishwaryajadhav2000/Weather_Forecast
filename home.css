@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*  */
+body{
+    background: linear-gradient(to right, #2d97ed,rgb(217, 57, 217) ,rgb(236, 236, 124), rgba(225, 9, 139, 0.99));
+    animation-name: backgroundclr;
+    animation-iteration-count: infinite;
+    animation-duration: 5s;
+    animation-timing-function: ease-in-out;
+    background-size: 500% 500%;
+}
+.sectn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    font-size: xx-large;
+    font-weight: bold;
+    color: white;
+}
+
+@keyframes backgroundclr{
+    /* 0%{    background: linear-gradient(to right, #2d97ed,rgb(217, 57, 217) , pink);}
+    50%{    background: linear-gradient(to bottom, #2d97ed,rgb(217, 57, 217) , pink);};
+    75%{    background: linear-gradient(to left, #2d97ed,rgb(217, 57, 217) , pink);}
+    10%{    background: linear-gradient(to top, #2d97ed,rgb(217, 57, 217) , pink);} */
+
+    0% {
+        background-position: 0% 50%; /* Start from the left */
+      }
+      25% {
+        background-position: 50% 50%; /* Center horizontally */
+      }
+      50% {
+        background-position: 100% 50%; /* Move to the right */
+      }
+      75% {
+        background-position: 50% 100%; /* Center vertically */
+      }
+}
+
+svg{
+    display: flex;
+    margin-left: 50%;
+}
+
+#weatherSection{
+    background: linear-gradient(to bottom, #2d97ed, #fff 70%);
+    color: #333333;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    font-size:larger;
+    font-weight: bold;
+}
+input, .button{
+    /* background: linear-gradient(to bottom, #764bed, #fff 70%); */
+    color: #333333;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+    font-size:larger;
+    font-weight: bolder; 
+    background-color: white;
+}
+
+
