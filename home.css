@@ -46,21 +46,38 @@ svg{
     display: flex;
     margin-left: 50%;
 }
-
-#weatherSection{
+input, .button{
+  /* background: linear-gradient(to bottom, #764bed, #fff 70%); */
+  color: #333333;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  font-size:larger;
+  font-weight: bolder; 
+  background-color: white;
+}
+#alert{
+  color: red;
+  font-size: large;
+  display: none;
+}
+#weatherSection , .newarticle{
     background: linear-gradient(to bottom, #2d97ed, #fff 70%);
     color: #333333;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
     font-size:larger;
     font-weight: bold;
 }
-input, .button{
-    /* background: linear-gradient(to bottom, #764bed, #fff 70%); */
-    color: #333333;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
-    font-size:larger;
-    font-weight: bolder; 
-    background-color: white;
+.newarticle{
+  margin-top: 5px;
 }
 
-
+.newarticle{
+  @apply border border-x-8 p-4 bg-gradient-to-r
+}
+#tmrWeatherData{
+  display: none;
+}
+.newarticle:hover{
+  #tmrWeatherData{
+    display:flex;
+  }
+}
