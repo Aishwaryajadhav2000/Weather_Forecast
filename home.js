@@ -21,7 +21,29 @@ const alertmsg = document.getElementById("alert");
 
 const takesection = document.getElementById("weatherSection2");
 
+const pastsearch = document.getElementById("pastsearch");
+
+//get data from localstorage
+const searchHistory = JSON.parse(localStorage.getItem("pastSearch")) || [];
+
+console.log("search History", searchHistory.length);
+if(searchHistory.length <=0){
+    pastsearch.style.display = "none";
+}else{
+    displayPastSearch(searchHistory);
+}
+
+
 function searchWeather() {
+
+    const inputVal = document.getElementById("weatherInput").value;
+
+    const pastSearch = { inputVal };
+
+
+    // const pastSearch = `${inputVal}`;
+    // const pastSearch = {inputVal};
+
 
     if (!document.getElementById("weatherInput").value) {
         alert("Please insert location...");
@@ -29,13 +51,13 @@ function searchWeather() {
         alertmsg.textContent = "Please insert location..."
         console.log("if");
     } else {
-        const inputVal = document.getElementById("weatherInput").value;
+        console.log("pastsearch", pastSearch);
         const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=331da149f0b279c6bcc79c78fdab8b45`;
         console.log("newAPI", newAPIURL);
 
-        fetch(newAPIURL).then(response =>{
+        fetch(newAPIURL).then(response => {
 
-            if(response.status === 404){
+            if (response.status === 404) {
                 console.log("city not found");
                 alertmsg.style.display = "block"
                 alertmsg.textContent = "city not found..."
@@ -48,7 +70,12 @@ function searchWeather() {
             DisplayWeather(data);
             getWeatherForTomorrow(inputVal);
 
+            paseSearchInLocal(pastSearch);
+
             document.getElementById("weatherInput").value = "";
+
+            displayPastSearch(searchHistory);
+
 
 
         }).catch(error => {
@@ -57,10 +84,6 @@ function searchWeather() {
         })
 
     }
-
-
-
-
 
     // Get all articles in the section
     const articles = takesection.querySelectorAll("article");
@@ -75,6 +98,94 @@ function searchWeather() {
         takesection.innerHTML = "";
     }
 }
+
+
+
+//Function to store data in localstorage
+function paseSearchInLocal(pastSearch) {
+
+    pastsearch.style.display = "block";
+
+
+    console.log("pastsearch 2", pastSearch);
+
+    // //get data from localstorage
+    // const searchHistory = JSON.parse(localStorage.getItem("pastSearch")) || [];
+
+    const valueExists = searchHistory.some((entry) => entry.inputVal === pastSearch.inputVal);
+
+    if (valueExists) {
+        console.log("Value existed");
+    } else {
+
+        //push data in searchHistory
+        searchHistory.push(pastSearch);
+        //Set data from searchHistory to localStorage
+        localStorage.setItem("pastSearch", JSON.stringify(searchHistory));
+        console.log("searchHistory ", searchHistory);
+
+    }
+
+}
+
+function displayPastSearch(searchHistory) {
+    const dropdown = document.getElementById("recentSearchCities");
+    console.log("display data function call")
+
+    // const existingvalues = searchHistory.map((cities) => {
+    //     console.log("cities", cities);
+    // })
+
+    const existingvalues = searchHistory.map((cities) => {
+        console.log("cities", cities.inputVal);
+
+        const option = document.createElement("option");
+        option.value = cities.inputVal;
+        option.textContent = cities.inputVal;
+
+
+        dropdown.appendChild(option);
+
+        // dropdown.innerHTML = `<option value="${cities.inputVal}">${cities.inputVal}</option>`
+
+       
+    })
+
+
+    console.log("existingvlues", existingvalues);
+    // dropdown.innerHTML = `<option>${entry.inputVal}</option>`
+
+    // dropdown.innerHTML = searchHistory.map(cities => `<option value="${cities}">${cities}</option>`).join('');
+}
+
+document.getElementById("recentSearchCities").addEventListener('change', async (event) =>{
+    const getCity = event.target.value;
+    console.log("get city", getCity);
+
+    const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${getCity}&appid=331da149f0b279c6bcc79c78fdab8b45`;
+        console.log("newAPI", newAPIURL);
+
+        fetch(newAPIURL).then(response => {
+
+          
+            return response.json()
+        }).then(data => {
+            console.log("data fetch", data);
+
+            DisplayWeather(data);
+            getWeatherForTomorrow(getCity);
+
+
+            displayPastSearch(searchHistory);
+
+
+
+        }).catch(error => {
+            console.log("errors", error);
+            alert("Please check your network connection...")
+        })
+
+})
 
 // searchWeather();
 function DisplayWeather(data) {
@@ -117,6 +228,15 @@ function currentLoc() {
 
                     DisplayWeather(data);
                     console.log("data.name", data.name);
+                    const inputVal = data.name;
+                    console.log("currentlocationname" , inputVal);
+
+                    const saveinlocal = {inputVal}
+
+
+                    paseSearchInLocal(saveinlocal)
+
+                    displayPastSearch(searchHistory);
 
                     getWeatherForTomorrow(data.name);
 
