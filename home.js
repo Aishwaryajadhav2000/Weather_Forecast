@@ -178,8 +178,6 @@ document.getElementById("recentSearchCities").addEventListener('change', async (
 
             displayPastSearch(searchHistory);
 
-
-
         }).catch(error => {
             console.log("errors", error);
             alert("Please check your network connection...")
@@ -239,6 +237,7 @@ function currentLoc() {
                     displayPastSearch(searchHistory);
 
                     getWeatherForTomorrow(data.name);
+                    
 
                 })
             }
@@ -326,10 +325,13 @@ function createDisplayWeatherSection(weatherinfo, locname) {
     const createArticle = document.createElement("article");
     createArticle.className = "newarticle"
     createArticle.innerHTML = `
-        <h1 class="text-center">${dateOnly}${locname}</h1>
+        <h5 class="text-center">${locname }'s weather on ${ dateOnly}</h5>
 
-        <div class="flex" style="justify-content: space-between; margin-top:10px;" id="tmrWeatherData">
-                <div>
+        <article class="flex" style="justify-content: space-between; margin-top:10px;" id="tmrWeatherData">
+
+
+        <div class="flex"  id="weatherdata2">
+                <div id="div">
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="orange"
                         class="bi bi-sun-fill" viewBox="0 0 16 16">
                         <path
@@ -338,7 +340,7 @@ function createDisplayWeatherSection(weatherinfo, locname) {
                     <h4>Temperature</h4>
                     <h3 id="temprature">${weatherinfo.main.temp + `<sup>0</sup>` + ' C'}</h3>
                 </div>
-                <div>
+                <div id="div">
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="blue"
                         class="bi bi-clouds " viewBox="0 0 16 16">
                         <path
@@ -350,7 +352,7 @@ function createDisplayWeatherSection(weatherinfo, locname) {
                     <h3 id="wind-speed">${weatherinfo.wind.speed}km/h</h3>
                 </div>
 
-                <div>
+                <div id="div">
                     <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="blue"
                         class="bi bi-moisture" viewBox="0 0 16 16">
                         <path
@@ -360,6 +362,8 @@ function createDisplayWeatherSection(weatherinfo, locname) {
                     <h3 id="humidity">${weatherinfo.main.humidity}%</h3>
                 </div>
             </div>
+        </article>
+
     `
     // <h1 class="text-center" onClick="displayAllWeatherData(weatherinfo)">${weatherinfo.dt_txt}</h1>
 

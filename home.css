@@ -78,6 +78,60 @@ input, .button{
 }
 .newarticle:hover{
   #tmrWeatherData{
-    display:flex;
+    display:block;
   }
 }
+
+#weatherdata{
+  justify-content: space-between; 
+  /* margin-top:10px; */
+  margin: 0;
+}
+
+#weatherdata2{
+  justify-content: space-between; 
+  margin-top:10px;
+}
+
+/* #tmrweatherdata{
+  justify-content: space-between; 
+  margin-top:10px;
+} */
+@media(max-width:500px){
+
+  #weatherdata{
+    display: block;
+    /* text-align: center; */
+  }
+
+  #weatherdata2{
+    display: block;
+    /* text-align: center; */
+  }
+
+ 
+  #div{
+  justify-content: space-between;
+  border: 2px solid rgb(28, 42, 242);
+  margin-top: 5px;
+  padding: 10px;
+  }
+
+ svg{
+  margin: 0;
+  display: inline-block;
+  }
+  h4{
+  margin: 5px;
+  display: inline-block;
+  }
+  h3{
+  margin: 5px;
+  display: inline-block;
+  color: rgb(119, 4, 161);
+  }
+h5{
+  font-size: small;
+}
+}
+
