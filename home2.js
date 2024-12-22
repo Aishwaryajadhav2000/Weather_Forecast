@@ -1,15 +1,7 @@
 
-// document.getElementById("weatherInput").value = "Bhiwandi"; // Remove this line after css work
-
-const APIURL = "https://api.weatherapi.com/v1/current.json?key=7ea64d87650b4ecfbe061544242711&q=";
-const APIURL2 = "https://api.openweathermap.org/data/2.5/forecast?q=tokyo&appid=331da149f0b279c6bcc79c78fdab8b45";
 const API3 = "https://api.openweathermap.org/data/2.5/weather?q={cityname}&appid=331da149f0b279c6bcc79c78fdab8b45"
 
 const today = new Date();
-// console.log(today.getDate()); // Day of the month (1-31)
-// console.log(today.getMonth() + 1); // Month (0-11, so add 1)
-// console.log(today.getFullYear()); // Full year (e.g., 2024)
-// console.log(todaysdate);
 const getdate = today.getDate();
 const getmonth = today.getMonth() + 1;
 const getyear = today.getFullYear();
@@ -26,91 +18,80 @@ const pastsearch = document.getElementById("pastsearch");
 //get data from localstorage
 const searchHistory = JSON.parse(localStorage.getItem("pastSearch")) || [];
 
+//checking recent search cities
 console.log("search History", searchHistory.length);
-if(searchHistory.length <=0){
+if (searchHistory.length <= 0) {
     pastsearch.style.display = "none";
-}else{
+} else {
     displayPastSearch(searchHistory);
 }
 
-
+//  Click On search button
 function searchWeather() {
-
     const inputVal = document.getElementById("weatherInput").value;
 
+    if (!inputVal) {
+        alert("Please insert location...");
+        alertmsg.style.display = "block";
+        alertmsg.textContent = "Please insert location..."
+    } else {
+        APICallFunc(inputVal);
+    }
+}
+
+//Function to Call API
+function APICallFunc(inputVal) {
+    //API taken from OpenWeather
+    const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=331da149f0b279c6bcc79c78fdab8b45`;
+    console.log("newAPI", newAPIURL);
     const pastSearch = { inputVal };
 
+    fetch(newAPIURL).then(response => response.json()).then(data => {
+        console.log("Data fetch succcessfully...", data);
 
-    // const pastSearch = `${inputVal}`;
-    // const pastSearch = {inputVal};
-
-
-    if (!document.getElementById("weatherInput").value) {
-        alert("Please insert location...");
-        alertmsg.style.display = "block"
-        alertmsg.textContent = "Please insert location..."
-        console.log("if");
-    } else {
-        console.log("pastsearch", pastSearch);
-        const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${inputVal}&appid=331da149f0b279c6bcc79c78fdab8b45`;
-        console.log("newAPI", newAPIURL);
-
-        fetch(newAPIURL).then(response => {
-
-            if (response.status === 404) {
-                console.log("city not found");
-                alertmsg.style.display = "block"
-                alertmsg.textContent = "city not found..."
-            }
-
-            return response.json()
-        }).then(data => {
-            console.log("data fetch", data);
+        if (data.cod == 404) {
+            alert("city not found..")
+             alertmsg.style.display = "block";
+            alertmsg.textContent = "city not found..."
+        } else {
 
             DisplayWeather(data);
-            getWeatherForTomorrow(inputVal);
+            countArticles(inputVal);
 
-            paseSearchInLocal(pastSearch);
+            pasteSearchInLocal(pastSearch);
 
             document.getElementById("weatherInput").value = "";
 
             displayPastSearch(searchHistory);
+        }
 
+    }).catch(error => {
+        console.log(error);
+        if (error.message === 'Failed to fetch'){
+            alert("Please check your network connection");
+        }
+    })
+}
 
+//Displaying weather data
+function DisplayWeather(data) {
 
-        }).catch(error => {
-            console.log("errors", error);
-            alert("Please check your network connection...")
-        })
+    document.getElementById("weatherSection").style.display = "block"
 
-    }
+    document.getElementById("location-name").innerHTML = "Today's Weather in " + data.name;
+    document.getElementById("temprature").innerHTML = data.main.temp + `<sup>0</sup>` + ' C';
+    document.getElementById("wind-speed").innerHTML = data.wind.speed + ' km/h';
+    document.getElementById("humidity").innerHTML = data.main.humidity + " %";
 
-    // Get all articles in the section
-    const articles = takesection.querySelectorAll("article");
-    // Measure the number of articles
-    const articleCount = articles.length;
-    console.log(`Number of articles in the section here: ${articleCount}`);
-
-    if (articleCount <= 0) {
-        console.log("article count 0")
-    } else {
-        console.log("article count more than 0");
-        takesection.innerHTML = "";
-    }
 }
 
 
-
 //Function to store data in localstorage
-function paseSearchInLocal(pastSearch) {
+function pasteSearchInLocal(pastSearch) {
 
     pastsearch.style.display = "block";
 
-
     console.log("pastsearch 2", pastSearch);
-
-    // //get data from localstorage
-    // const searchHistory = JSON.parse(localStorage.getItem("pastSearch")) || [];
 
     const valueExists = searchHistory.some((entry) => entry.inputVal === pastSearch.inputVal);
 
@@ -128,13 +109,11 @@ function paseSearchInLocal(pastSearch) {
 
 }
 
+//Displaying data in dropdown
 function displayPastSearch(searchHistory) {
-    const dropdown = document.getElementById("recentSearchCities");
-    console.log("display data function call")
 
-    // const existingvalues = searchHistory.map((cities) => {
-    //     console.log("cities", cities);
-    // })
+    const dropdown = document.getElementById("recentSearchCities");
+    console.log("display data function call");
 
     const existingvalues = searchHistory.map((cities) => {
         console.log("cities", cities.inputVal);
@@ -143,111 +122,21 @@ function displayPastSearch(searchHistory) {
         option.value = cities.inputVal;
         option.textContent = cities.inputVal;
 
-
         dropdown.appendChild(option);
 
-        // dropdown.innerHTML = `<option value="${cities.inputVal}">${cities.inputVal}</option>`
-
-       
     })
 
-
     console.log("existingvlues", existingvalues);
-    // dropdown.innerHTML = `<option>${entry.inputVal}</option>`
 
-    // dropdown.innerHTML = searchHistory.map(cities => `<option value="${cities}">${cities}</option>`).join('');
 }
 
-document.getElementById("recentSearchCities").addEventListener('change', async (event) =>{
+document.getElementById("recentSearchCities").addEventListener('change', async (event) => {
     const getCity = event.target.value;
     console.log("get city", getCity);
-
-    const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?q=${getCity}&appid=331da149f0b279c6bcc79c78fdab8b45`;
-        console.log("newAPI", newAPIURL);
-
-        fetch(newAPIURL).then(response => {
-
-          
-            return response.json()
-        }).then(data => {
-            console.log("data fetch", data);
-
-            DisplayWeather(data);
-            getWeatherForTomorrow(getCity);
-
-
-            displayPastSearch(searchHistory);
-
-        }).catch(error => {
-            console.log("errors", error);
-            alert("Please check your network connection...")
-        })
+    alertmsg.style.display = "none";
+    APICallFunc(getCity);
 
 })
-
-// searchWeather();
-function DisplayWeather(data) {
-    // console.log("data", data);
-    document.getElementById("weatherSection").style.display = "block"
-
-    document.getElementById("location-name").innerHTML = "Today's Weather in " + data.name;
-    document.getElementById("temprature").innerHTML = data.main.temp + `<sup>0</sup>` + ' C';
-    document.getElementById("wind-speed").innerHTML = data.wind.speed + ' km/h';
-    document.getElementById("humidity").innerHTML = data.main.humidity + " %";
-
-
-}
-
-function currentLoc() {
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-                // console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=331da149f0b279c6bcc79c78fdab8b45`
-                console.log("New Api URL in current location", newAPIURL);
-
-                fetch(newAPIURL).then(response => response.json()).then(data => {
-                    console.log(data);
-
-                    DisplayWeather(data);
-                    console.log("data.name", data.name);
-                    const inputVal = data.name;
-                    console.log("currentlocationname" , inputVal);
-
-                    const saveinlocal = {inputVal}
-
-
-                    paseSearchInLocal(saveinlocal)
-
-                    displayPastSearch(searchHistory);
-
-                    getWeatherForTomorrow(data.name);
-                    
-
-                })
-            }
-        );
-    } else {
-        console.error("Geolocation is not supported by this browser.");
-    }
-
-    // Get all articles in the section
-    const articles = takesection.querySelectorAll("article");
-    // Measure the number of articles
-    const articleCount = articles.length;
-    console.log(`Number of articles in the section here: ${articleCount}`);
-
-    if (articleCount <= 0) {
-        console.log("article count 0")
-    } else {
-        console.log("article count more than 0");
-        takesection.innerHTML = "";
-    }
-
-}
 
 function getWeatherForTomorrow(inputVal) {
 
@@ -262,35 +151,20 @@ function getWeatherForTomorrow(inputVal) {
     })
 
 }
-function DisplayWeatherForTomorrow(data) {
-    // console.log("display tomorrow weather", data);
-    // console.log("data.name2", data.city.name);
 
+function DisplayWeatherForTomorrow(data) {
+    console.log("DisplayWeatherForTomorrow function call", data)
 
     data.list.forEach(weatherinfo => {
         // console.log("weatherinfo", weatherinfo);
         if (!weatherinfo.dt_txt.includes(getTodaysDate) &&
             weatherinfo.dt_txt.includes(getTime)) {
 
-            // console.log("weatherinfo", weatherinfo)
-
-
-
-
-
-
             createDisplayWeatherSection(weatherinfo, data.city.name);
-
-            // document.getElementById("location-name").innerHTML = data.name;
-            // document.getElementById("tmrdate").innerHTML = weatherinfo.dt_txt;
-            // document.getElementById("tmrtemprature").innerHTML = weatherinfo.main.temp + `<sup>0</sup>` + ' C';
-            // document.getElementById("tmrwind-speed").innerHTML = weatherinfo.wind.speed + ' km/h';
-            // document.getElementById("tmrhumidity").innerHTML = weatherinfo.main.humidity + " %";
         }
     })
 
     document.getElementById("weatherSection2").style.display = "block"
-
 
 }
 function createDisplayWeatherSection(weatherinfo, locname) {
@@ -313,7 +187,7 @@ function createDisplayWeatherSection(weatherinfo, locname) {
     const createArticle = document.createElement("article");
     createArticle.className = "newarticle"
     createArticle.innerHTML = `
-        <h5 class="text-center">${locname }'s weather on ${ dateOnly}</h5>
+        <h5 class="text-center">${locname}'s weather on ${dateOnly}</h5>
 
         <article class="flex" style="justify-content: space-between; margin-top:10px;" id="tmrWeatherData">
 
@@ -362,5 +236,67 @@ function createDisplayWeatherSection(weatherinfo, locname) {
     // const articleCount = articles.length;
     // console.log(`Number of articles in the section: ${articleCount}`);
 }
+
+function currentLoc() {
+
+    alertmsg.style.display = "none";
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+                // console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                const newAPIURL = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=331da149f0b279c6bcc79c78fdab8b45`
+                console.log("New Api URL in current location", newAPIURL);
+
+                fetch(newAPIURL).then(response => response.json()).then(data => {
+                    console.log(data);
+
+                    DisplayWeather(data);
+                    console.log("data.name", data.name);
+                    const inputVal = data.name;
+                    console.log("currentlocationname", inputVal);
+
+                    const saveinlocal = { inputVal }
+
+                    countArticles(inputVal);
+
+                    pasteSearchInLocal(saveinlocal)
+
+                    displayPastSearch(searchHistory);
+
+                })
+            }
+        );
+    } else {
+        console.error("Geolocation is not supported by this browser.");
+    }
+
+
+}
+
+function countArticles(inputVal) {
+    // Get all articles in the section
+    const articles = takesection.querySelectorAll("article");
+    // Measure the number of articles
+    const articleCount = articles.length;
+    console.log(`Number of articles in the section here: ${articleCount}`);
+
+    if (articleCount <= 0) {
+        console.log("article count 0")
+
+        getWeatherForTomorrow(inputVal);
+
+    } else {
+        console.log("article count more than 0");
+        takesection.innerHTML = "";
+
+        getWeatherForTomorrow(inputVal);
+
+    }
+
+}
+
 
 

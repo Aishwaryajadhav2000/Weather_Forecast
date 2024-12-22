@@ -55,9 +55,11 @@ input, .button{
   background-color: white;
 }
 #alert{
-  color: red;
-  font-size: large;
+  color: rgb(114, 18, 3);
+  font-size:x-large;
+  text-align: center;
   display: none;
+  font-weight: bolder;
 }
 #weatherSection , .newarticle{
     background: linear-gradient(to bottom, #2d97ed, #fff 70%);
@@ -132,6 +134,9 @@ input, .button{
   }
 h5{
   font-size: small;
+}
+.sectn{
+  text-align: center;
 }
 }
 
