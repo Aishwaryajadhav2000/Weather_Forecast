@@ -61,7 +61,7 @@ input, .button{
   display: none;
   font-weight: bolder;
 }
-#weatherSection , .newarticle{
+#weatherSection , .newarticle , #pendingState{
     background: linear-gradient(to bottom, #2d97ed, #fff 70%);
     color: #333333;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
